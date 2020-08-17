@@ -99,7 +99,7 @@ void MarlinUI::clear_lcd() {
     tft.add_image(0, 0, imgBootScreen);  // MarlinLogo320x240x16
 
     #ifdef WEBSITE_URL
-      tft.add_text(4, 188, COLOR_WEBSITE_URL, WEBSITE_URL);
+//      tft.add_text(4, 188, COLOR_WEBSITE_URL, WEBSITE_URL);
     #endif
 
     tft.queue.sync();
@@ -267,11 +267,11 @@ void MarlinUI::draw_status_screen() {
 
   is_homed = TEST(axis_homed, X_AXIS);
   tft_string.set(blink & !is_homed ? "?" : ftostr4sign(LOGICAL_X_POSITION(current_position.x)));
-  tft.add_text( 68 - tft_string.width(), 3, is_homed ? COLOR_AXIS_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
+  tft.add_text( 68 - tft_string.width(), 3, is_homed ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
 
   is_homed = TEST(axis_homed, Y_AXIS);
   tft_string.set(blink & !is_homed ? "?" : ftostr4sign(LOGICAL_Y_POSITION(current_position.y)));
-  tft.add_text(185 - tft_string.width(), 3, is_homed ? COLOR_AXIS_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
+  tft.add_text(185 - tft_string.width(), 3, is_homed ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
 
   is_homed = TEST(axis_homed, Z_AXIS);
   if (blink & !is_homed) {
@@ -287,7 +287,7 @@ void MarlinUI::draw_status_screen() {
     tft_string.set(ftostr52sp(z));
     offset += 25 - tft_string.width();
   }
-  tft.add_text(301 - tft_string.width() - offset, 3, is_homed ? COLOR_AXIS_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
+  tft.add_text(301 - tft_string.width() - offset, 3, is_homed ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_NOT_HOMED, tft_string);
 
   // feed rate
   tft.canvas(70, 136, 80, 32);
@@ -336,7 +336,7 @@ void MarlinUI::draw_status_screen() {
 
   #if ENABLED(TOUCH_SCREEN)
     add_control(256, 130, menu_main, imgSettings);
-    TERN_(SDSUPPORT, add_control(0, 130, menu_media, imgSD, card.isMounted() && !printingIsActive(), COLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
+    TERN_(SDSUPPORT, add_control(0, 130, menu_media, imgSD, card.isMounted() && !printingIsActive(), SDCOLOR_CONTROL_ENABLED, card.isMounted() && printingIsActive() ? COLOR_BUSY : COLOR_CONTROL_DISABLED));
   #endif
 }
 
@@ -346,7 +346,7 @@ void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t st
   tft_string.set(pstr, itemIndex, itemString);
   if (valstr)
     tft_string.add(valstr);
-  tft.add_text(tft_string.center(TFT_WIDTH), MENU_TEXT_Y_OFFSET, COLOR_YELLOW, tft_string);
+  tft.add_text(tft_string.center(TFT_WIDTH), MENU_TEXT_Y_OFFSET, COLOR_WHITE /*COLOR_YELLOW*/, tft_string);
 }
 
 // Draw a generic menu item with pre_char (if selected) and post_char
@@ -393,7 +393,7 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
   menu_line(line++);
   tft_string.set(pstr, itemIndex, itemString);
   tft_string.trim();
-  tft.add_text(tft_string.center(TFT_WIDTH), MENU_TEXT_Y_OFFSET, COLOR_MENU_TEXT, tft_string);
+  tft.add_text(tft_string.center(TFT_WIDTH), MENU_TEXT_Y_OFFSET, COLOR_MENU_VALUE_FONT  /*COLOR_MENU_TEXT*/, tft_string);
 
   TERN_(AUTO_BED_LEVELING_UBL, if (ui.external_control) line++);  // ftostr52() will overwrite *value so *value has to be displayed first
 
@@ -430,21 +430,21 @@ void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const valu
     tft.set_background(COLOR_BACKGROUND);
 
     int16_t position = (SLIDER_LENGHT - 2) * ui.encoderPosition / maxEditValue;
-    tft.add_bar(0, 7, 1, 2, ui.encoderPosition == 0 ? COLOR_SLIDER_INACTIVE : COLOR_SLIDER);
-    tft.add_bar(1, 6, position, 4, COLOR_SLIDER);
+    tft.add_bar(0, 7, 1, 2, ui.encoderPosition == 0 ? COLOR_SLIDER_INACTIVE : COLOR_ORANGEZ);   //COLOR_SLIDER);
+    tft.add_bar(1, 6, position, 4, COLOR_ORANGEZ);   //COLOR_SLIDER);
     tft.add_bar(position + 1, 6, SLIDER_LENGHT - 2 - position, 4, COLOR_SLIDER_INACTIVE);
-    tft.add_bar(SLIDER_LENGHT - 1, 7, 1, 2, int32_t(ui.encoderPosition) == maxEditValue ? COLOR_SLIDER : COLOR_SLIDER_INACTIVE);
+    tft.add_bar(SLIDER_LENGHT - 1, 7, 1, 2, int32_t(ui.encoderPosition) == maxEditValue ? COLOR_ORANGEZ  /*COLOR_SLIDER*/ : COLOR_SLIDER_INACTIVE);
 
     #if ENABLED(TOUCH_SCREEN)
-      tft.add_image((SLIDER_LENGHT - 8) * ui.encoderPosition / maxEditValue, 0, imgSlider, COLOR_SLIDER);
+      tft.add_image((SLIDER_LENGHT - 8) * ui.encoderPosition / maxEditValue, 0, imgSlider, COLOR_ORANGEZ  /*COLOR_SLIDER*/);
       touch.add_control(SLIDER, (TFT_WIDTH - SLIDER_LENGHT) / 2, SLIDER_Y_POSITION - 8, SLIDER_LENGHT, 32, maxEditValue);
     #endif
   }
-
+//add_control(uint16_t x, uint16_t y, TouchControlType control_type, MarlinImage image, bool is_enabled = true, uint16_t color_enabled = COLOR_CONTROL_ENABLED,
   #if ENABLED(TOUCH_SCREEN)
-    add_control(32, 176, DECREASE, imgDecrease);
-    add_control(224, 176, INCREASE, imgIncrease);
-    add_control(128, 176, CLICK, imgConfirm);
+    add_control(32, 176, DECREASE, imgDecrease, true, COLOR_ORANGEZ);
+    add_control(224, 176, INCREASE, imgIncrease, true, COLOR_ORANGEZ);
+    add_control(128, 176, CLICK, imgConfirm, true, COLOR_ORANGEZ);
   #endif
 }
 

@@ -1,6 +1,6 @@
-# Marlin for ET4/5 series 3D printers
+# Marlin for ET4
 
-This project is an effort to try to adapt the Anet ET4/ET5 motherboard and display for use with Marlin.
+This project is an effort to try to adapt the Anet ET4 motherboard and display for use with Marlin.
 Anyone can contribute to completing this project. Feedback is also welcome.
 
 ## Current status
@@ -16,10 +16,10 @@ Anyone can contribute to completing this project. Feedback is also welcome.
   - Powerloss. See issues tab. 
   
 ### On progress:
-  - PC/SD firmware load/update: I've managed to get working OpenBLT, (PC-USB / SD / DFU) updates. Still testing and looking for a way to flash first time without flasher. Even so, a hardware flasher is very recommended for its price.
+  - PC/SD firmware load/update: There is no bootloader currently. Best option would be use stock ET4 bootloader.
  
 ### To take a look:
-  - All files on path "Marlin\buildroot\share\PlatformIO\variants\ET4\" should be adapted to ET4/5 Board. Specially peripheralPins.c, variant.cpp, variant.h etc..
+  - All files on path "Marlin\buildroot\share\PlatformIO\variants\ET4\" should be adapted to ET4 Board. Specially peripheralPins.c, variant.cpp, variant.h etc..
  
 ### Known bugs:
 
@@ -45,12 +45,11 @@ If you don't perform this step, and, just in case of brick, there are copies of 
 There are several tutorials available for [stlink](https://www.cnx-software.com/2020/02/04/how-to-recover-from-a-bad-firmware-upgrade-on-anet-et4-3d-printer/)/[j-link](https://danielabalo.wordpress.com/flasear-anet-et4/) flashers. 
 
 This firmware lacks of bootloader, so you have to flash it from address 0x8000000.
-  1. Download or clone this [repo](https://github.com/davidtgbe/Marlin/archive/bugfix-2.0.x.zip).
-  2. Make sure to modify your config.h and config_adv.h according to your ET4/5 model (ET4, ET5, ET4 PRO, ET4+, ...)
-     - Settings as driver model (A4988/TMC2208), Z endstop position (UP/DOWN), bed and Z size, auto bed levelling sensor, etc, need to be defined.
-     - Provided config is for ET4/TMC2208 model with attachable bed levelling sensor.
-     - Default config is an standard one. Fine tunning could be needed (e.g. XYZE [steps](https://marlinfw.org/docs/gcode/M092.html) or offsets).
-  3. Build project with platform.io on VS code is recommended. There are also many [tutorials](https://3daddict.com/marlin-2-0-beginner-guide-for-3d-printer-firmware/). You can follow them, ADAPTING steps to build this project.
+  1. Download or clone this repo.
+  2. Make sure to modify your config.h and config_adv.h according to your ET4 model (ET4, ET4 PRO, ET4+, ...)
+     - Settings as driver model (A4988/TMC2208), Z endstop position (UP/DOWN), bed size, auto bed levelling sensor, etc, need to be defined.
+     - Provided config is for ET4/TM2208 model with attachable bed levelling sensor.
+  3. Build project with platform io on VS code is recommended.
   4. Burn firmware with your flasher (.elf or .bin starting from 0x08000000 address).
 
 You can connect with pronterface to corresponding com port @115200bps.

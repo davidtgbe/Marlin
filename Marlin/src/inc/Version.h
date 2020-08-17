@@ -97,7 +97,7 @@
    * documentation about a specific Marlin release. Displayed in the Info Menu.
    */
 #ifndef WEBSITE_URL
-  #define WEBSITE_URL "https://github.com/davidtgbe/Marlin"
+  #define WEBSITE_URL "www.anet3d.com"      //"https://github.com/davidtgbe/Marlin"
 #endif
 
 /**
