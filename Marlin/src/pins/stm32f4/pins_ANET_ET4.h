@@ -44,8 +44,8 @@
 // FLASH_EEPROM_EMULATION is the recommended and working option.
 #if NO_EEPROM_SELECTED
   //#define SRAM_EEPROM_EMULATION                 // Use BackSRAM-based EEPROM emulation
-  #define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation                
-  //#define I2C_EEPROM                            // Use I2C EEPROM onboard IC
+  //#define FLASH_EEPROM_EMULATION                  // Use Flash-based EEPROM emulation                
+  #define I2C_EEPROM                            // Use I2C EEPROM onboard IC
 #endif
 
 #if ENABLED(FLASH_EEPROM_EMULATION)
@@ -57,7 +57,7 @@
   // Not working. 512 Bytes are not enough to store all config settings. Tested: Replaced with AT24C256 IC and it works fine. 
   #define I2C_SDA_PIN                       PB11
   #define I2C_SCL_PIN                       PB10
-  #define MARLIN_EEPROM_SIZE                0x200                // 4Kb (From Datasheet)
+  #define MARLIN_EEPROM_SIZE                0x8000                // 256Kb (From Datasheet)
 #endif
 
 //

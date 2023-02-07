@@ -81,7 +81,7 @@
  * Values: ET_BOARD_SILENT, ET_BOARD_NOISY
  */
 
-//#define ET_BOARD              ET_BOARD_SILENT
+#define ET_BOARD                ET_BOARD_SILENT
 
 
 /**
@@ -91,7 +91,7 @@
  * Values: ET_LV_NONE, ET_LV_BLTOUCH, ET_LV_MOUNTED_PROBE, ET_LV_FILM_STRIP
  */
 
-//#define ET_LEVELLING          ET_LV_BLTOUCH
+#define ET_LEVELLING            ET_LV_BLTOUCH
 
 /**
  * Parameter: ET_Z_HOMING_DIR
@@ -100,7 +100,7 @@
  * Values: ET_Z_HOMING_DIR_UP, ET_Z_HOMING_DIR_DOWN
  */
 
-//#define ET_Z_HOMING_DIR       ET_Z_HOMING_DIR_DOWN
+#define ET_Z_HOMING_DIR         ET_Z_HOMING_DIR_DOWN
 
 /**
  * Parameter: ET_MOD
@@ -110,7 +110,7 @@
  * Usage: To select multiple mods use '|' to join. ex: #define ET_MOD (ET_MOD_BMG | ET_MOD_V6)
  */
 
-//#define ET_MOD                ET_MOD_BMG
+#define ET_MOD                  ET_MOD_BMG
 
 /**
  * Parameter: ET_Z_ENDSTOP_POSTION 
@@ -119,7 +119,7 @@
  * Values: ET_Z_ENDSTOP_POSTION_NONE, ET_Z_ENDSTOP_POSTION_TOP, ET_Z_ENDSTOP_POSTION_BOTTOM
  */
 
-//#define ET_Z_ENDSTOP_POSTION  ET_Z_ENDSTOP_POSTION_NONE
+#define ET_Z_ENDSTOP_POSTION    ET_Z_ENDSTOP_POSTION_NONE
 
 /**
  * Parameter: ET_CUSTOM_MACHINE_NAME
@@ -127,7 +127,7 @@
  * Type: Optional 
  */
 
-#define ET_CUSTOM_MACHINE_NAME  "Anet ET4" 
+#define ET_CUSTOM_MACHINE_NAME  "Anet ET4 BLT BMG SILENT" 
 
 // ----------------------------------------------
 // 3. Basic Post-installation configuration steps

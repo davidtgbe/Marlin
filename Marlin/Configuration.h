@@ -38,7 +38,7 @@
 #define CONFIGURATION_H_VERSION 02010300
 
 // Uncomment next line and use EasyConfig.h file for an easy configuration of Anet ET series models
-//#define ET_EASY_CONFIG
+#define ET_EASY_CONFIG
 
 //===========================================================================
 //============================= Getting Started =============================
@@ -1545,7 +1545,7 @@
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
-#define PROBING_MARGIN 25
+#define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
 #define XY_PROBE_FEEDRATE (133*60)
