@@ -3197,7 +3197,7 @@
    * UNIFONT   - Lightweight font, no antialiasing. Supports Latin Extended and non-Latin characters.
    * HELVETICA - Lightweight font, no antialiasing. Supports Basic Latin (0x0020-0x007F) and Latin-1 Supplement (0x0080-0x00FF) characters only.
    */
-  #define TFT_FONT HELVETICA
+  #define TFT_FONT NOTOSANS
 
   //#define TFT_SHARED_SPI   // SPI is shared between TFT display and other devices. Disable async data transfer
 #endif
