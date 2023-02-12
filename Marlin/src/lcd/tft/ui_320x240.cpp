@@ -269,12 +269,12 @@ void MarlinUI::draw_status_screen() {
     #else
       312, FONT_LINE_HEIGHT
     #endif
-    , COLOR_AXIS_HOMED
+    , COLOR_AXIS_FRAME
   );
 
   if (TERN0(LCD_SHOW_E_TOTAL, printingIsActive())) {
     #if ENABLED(LCD_SHOW_E_TOTAL)
-      tft.add_text( 10, tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED , "E");
+      tft.add_text( 10, tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_FRAME , "E");
       const uint8_t escale = e_move_accumulator >= 100000.0f ? 10 : 1; // After 100m switch to cm
       tft_string.set(ftostr4sign(e_move_accumulator / escale));
       tft_string.add(escale == 10 ? 'c' : 'm');
@@ -283,7 +283,7 @@ void MarlinUI::draw_status_screen() {
     #endif
   }
   else {
-    tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 32, 10), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED , "X");
+    tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 32, 10), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_FRAME , "X");
     const bool nhx = axis_should_home(X_AXIS);
     tft_string.set(blink && nhx ? "?" : ftostr4sign(LOGICAL_X_POSITION(current_position.x)));
     tft.add_text(
@@ -295,7 +295,7 @@ void MarlinUI::draw_status_screen() {
       nhx ? COLOR_AXIS_NOT_HOMED : COLOR_AXIS_HOMED, tft_string
     );
 
-    tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 110, 127), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED , "Y");
+    tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 110, 127), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_FRAME , "Y");
     const bool nhy = axis_should_home(Y_AXIS);
     tft_string.set(blink && nhy ? "?" : ftostr4sign(LOGICAL_Y_POSITION(current_position.y)));
     tft.add_text(
@@ -308,7 +308,7 @@ void MarlinUI::draw_status_screen() {
     );
   }
 
-  tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 192, 219), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_HOMED , "Z");
+  tft.add_text(TERN(TFT_COLOR_UI_PORTRAIT, 192, 219), tft_string.vcenter(FONT_LINE_HEIGHT), COLOR_AXIS_FRAME , "Z");
   const bool nhz = axis_should_home(Z_AXIS);
   uint16_t offset = 25;
   if (blink && nhz)
@@ -518,9 +518,9 @@ void MenuEditItemBase::draw_edit_screen(FSTR_P const fstr, const char * const va
 
 void TFT::draw_edit_screen_buttons() {
   #if ENABLED(TOUCH_SCREEN)
-    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 16, 32), TFT_HEIGHT - 64, DECREASE, imgDecrease);
-    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 172, 224), TFT_HEIGHT - 64, INCREASE, imgIncrease);
-    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 96, 128), TFT_HEIGHT - 64, CLICK, imgConfirm);
+    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 16, 32), TFT_HEIGHT - 64, DECREASE, imgDecrease, true, COLOR_DECREASE);
+    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 172, 224), TFT_HEIGHT - 64, INCREASE, imgIncrease, true, COLOR_INCREASE);
+    add_control(TERN(TFT_COLOR_UI_PORTRAIT, 96, 128), TFT_HEIGHT - 64, CLICK, imgConfirm, true, COLOR_TICK);
   #endif
 }
 
@@ -673,11 +673,6 @@ struct MotionAxisState {
 };
 
 MotionAxisState motionAxisState;
-
-#define E_BTN_COLOR COLOR_YELLOW
-#define X_BTN_COLOR COLOR_CORAL_RED
-#define Y_BTN_COLOR COLOR_VIVID_GREEN
-#define Z_BTN_COLOR COLOR_LIGHT_BLUE
 
 #define BTN_WIDTH 48
 #define BTN_HEIGHT 39
