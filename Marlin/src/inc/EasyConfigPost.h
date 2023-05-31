@@ -115,13 +115,6 @@
 //
 
 // Undefine to overwrite
-#undef USE_XMIN_PLUG
-#undef USE_YMIN_PLUG
-#undef USE_ZMIN_PLUG
-#undef USE_XMAX_PLUG
-#undef USE_YMAX_PLUG
-#undef USE_ZMAX_PLUG 
-
 #undef X_MIN_ENDSTOP_HIT_STATE
 #undef Y_MIN_ENDSTOP_HIT_STATE
 #undef Z_MIN_ENDSTOP_HIT_STATE
@@ -129,19 +122,11 @@
 #undef Z_MIN_PROBE_ENDSTOP_HIT_STATE
 
 // Redefine
-#define USE_XMIN_PLUG
-#define USE_YMIN_PLUG
-#define USE_ZMIN_PLUG
-
 #define X_MIN_ENDSTOP_HIT_STATE LOW
 #define Y_MIN_ENDSTOP_HIT_STATE LOW
 #define Z_MIN_ENDSTOP_HIT_STATE LOW
 #define Z_MAX_ENDSTOP_HIT_STATE LOW
 #define Z_MIN_PROBE_ENDSTOP_HIT_STATE LOW
-
-#if (ET_Z_ENDSTOP_POSTION & ET_Z_ENDSTOP_POSTION_TOP)
-    #define USE_ZMAX_PLUG
-#endif
 
 //
 // Levelling

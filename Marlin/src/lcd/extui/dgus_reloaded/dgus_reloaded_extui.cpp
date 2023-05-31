@@ -47,12 +47,12 @@ namespace ExtUI {
   }
 
   void onPrinterKilled(FSTR_P const error, FSTR_P const component) {
-    dgus_screen_handler.PrinterKilled(error, component);
+    dgus_screen_handler.printerKilled(error, component);
   }
 
-  void onMediaInserted() { TERN_(SDSUPPORT, dgus_screen_handler.SDCardInserted()); }
-  void onMediaError()    { TERN_(SDSUPPORT, dgus_screen_handler.SDCardError()); }
-  void onMediaRemoved()  { TERN_(SDSUPPORT, dgus_screen_handler.SDCardRemoved()); }
+  void onMediaInserted() { TERN_(HAS_MEDIA, dgus_screen_handler.SDCardInserted()); }
+  void onMediaError()    { TERN_(HAS_MEDIA, dgus_screen_handler.SDCardError()); }
+  void onMediaRemoved()  { TERN_(HAS_MEDIA, dgus_screen_handler.SDCardRemoved()); }
 
   void onPlayTone(const uint16_t frequency, const uint16_t duration) {
     dgus_screen_handler.PlayTone(frequency, duration);
@@ -71,7 +71,7 @@ namespace ExtUI {
   }
 
   void onFilamentRunout(const extruder_t extruder) {
-    dgus_screen_handler.FilamentRunout(extruder);
+    dgus_screen_handler.filamentRunout(extruder);
   }
 
   void onUserConfirmRequired(const char * const msg) {

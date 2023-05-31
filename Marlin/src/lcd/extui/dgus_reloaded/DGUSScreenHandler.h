@@ -37,7 +37,7 @@ public:
   static void Ready();
   static void Loop();
 
-  static void PrinterKilled(FSTR_P const error, FSTR_P const component);
+  static void printerKilled(FSTR_P const error, FSTR_P const component);
   static void UserConfirmRequired(const char * const msg);
   static void SettingsReset();
   static void StoreSettings(char *buff);
@@ -50,9 +50,9 @@ public:
   static void PrintTimerStarted();
   static void PrintTimerPaused();
   static void PrintTimerStopped();
-  static void FilamentRunout(const ExtUI::extruder_t extruder);
+  static void filamentRunout(const ExtUI::extruder_t extruder);
 
-  #if ENABLED(SDSUPPORT)
+  #if HAS_MEDIA
     /// Marlin informed us that a new SD has been inserted.
     static void SDCardInserted();
     /// Marlin informed us that the SD Card has been removed().
@@ -89,7 +89,7 @@ public:
 
   static uint8_t debug_count;
 
-  #if ENABLED(SDSUPPORT)
+  #if HAS_MEDIA
     static ExtUI::FileList filelist;
     static uint16_t filelist_offset;
     static int16_t filelist_selected;

@@ -34,7 +34,7 @@
 
 uint8_t DGUSScreenHandler::debug_count = 0;
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
   ExtUI::FileList DGUSScreenHandler::filelist;
   uint16_t DGUSScreenHandler::filelist_offset = 0;
   int16_t DGUSScreenHandler::filelist_selected = -1;
@@ -148,7 +148,7 @@ void DGUSScreenHandler::Loop() {
   dgus_display.Loop();
 }
 
-void DGUSScreenHandler::PrinterKilled(FSTR_P const error, FSTR_P const component) {
+void DGUSScreenHandler::printerKilled(FSTR_P const error, FSTR_P const component) {
   SetMessageLine(error, 1);
   SetMessageLine(component, 2);
   SetMessageLinePGM(NUL_STR, 3);
@@ -271,7 +271,7 @@ void DGUSScreenHandler::PrintTimerStopped() {
   TriggerScreenChange(DGUS_Screen::PRINT_FINISHED);
 }
 
-void DGUSScreenHandler::FilamentRunout(const ExtUI::extruder_t extruder) {
+void DGUSScreenHandler::filamentRunout(const ExtUI::extruder_t extruder) {
   char buffer[21];
 
   snprintf_P(buffer, sizeof(buffer), GET_TEXT(DGUS_MSG_FILAMENT_RUNOUT), extruder);
@@ -281,7 +281,7 @@ void DGUSScreenHandler::FilamentRunout(const ExtUI::extruder_t extruder) {
   dgus_display.PlaySound(3);
 }
 
-#if ENABLED(SDSUPPORT)
+#if HAS_MEDIA
 
   void DGUSScreenHandler::SDCardInserted() {
     if (current_screen == DGUS_Screen::HOME)
@@ -299,7 +299,7 @@ void DGUSScreenHandler::FilamentRunout(const ExtUI::extruder_t extruder) {
       TriggerScreenChange(DGUS_Screen::HOME);
   }
 
-#endif // SDSUPPORT
+#endif // HAS_MEDIA
 
 #if ENABLED(POWER_LOSS_RECOVERY)
 

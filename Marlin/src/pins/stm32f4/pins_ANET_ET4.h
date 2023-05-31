@@ -226,51 +226,25 @@
 //
 // SD Card
 //
-
-/**
- * Status: SPI Working. Reported random problems with SDIO. 
- * Need SDIO testing after some recevntly SDIO rework
- */
-
-//#define SDIO_SUPPORT
+//#define ONBOARD_SDIO
 
 #ifndef SDCARD_CONNECTION
   #define SDCARD_CONNECTION         CUSTOM_CABLE
 #endif
 
-#if ENABLED(SDSUPPORT)
-  #ifndef SDIO_D0_PIN
-    #define SDIO_D0_PIN                       PC8
-  #endif
-  #ifndef SDIO_D1_PIN
-    #define SDIO_D1_PIN                       PC9
-  #endif
-  #ifndef SDIO_D2_PIN
-    #define SDIO_D2_PIN                       PC10
-  #endif
-  #ifndef SDIO_D3_PIN
-    #define SDIO_D3_PIN                       PC11
-  #endif
-  #ifndef SDIO_CK_PIN
-    #define SDIO_CK_PIN                       PC12
-  #endif
-  #ifndef SDIO_CMD_PIN
-    #define SDIO_CMD_PIN                      PD2
-  #endif
+#if HAS_MEDIA
 
-  #define SDIO_CLOCK                          24000000 // 24 MHz
-
-  #if DISABLED(SDIO_SUPPORT)
+  #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI
-    #define SDSS                              SDIO_D3_PIN
-    #define SD_SS_PIN                         SDSS
-    #define SD_SCK_PIN                        SDIO_CK_PIN
-    #define SD_MISO_PIN                       SDIO_D0_PIN
-    #define SD_MOSI_PIN                       SDIO_CMD_PIN
+    #define SDSS                            PC11
+    #define SD_SS_PIN                       SDSS
+    #define SD_SCK_PIN                      PC12
+    #define SD_MISO_PIN                     PC8
+    #define SD_MOSI_PIN                     PD2
   #endif
 
   #ifndef SD_DETECT_PIN
-    #define SD_DETECT_PIN                     PD3
+    #define SD_DETECT_PIN                   PD3
   #endif
 
 #endif
