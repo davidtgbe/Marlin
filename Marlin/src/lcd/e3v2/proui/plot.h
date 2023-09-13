@@ -30,10 +30,10 @@
 
 #include "dwinui.h"
 
-class PlotClass {
+class Plot {
 public:
-  static void Draw(const frame_rect_t &frame, const_float_t max, const_float_t ref=0);
-  static void Update(const_float_t value);
+  static void draw(const frame_rect_t &frame, const_celsius_float_t max, const_float_t ref=0);
+  static void update(const_float_t value);
 };
 
-extern PlotClass plot;
+extern Plot plot;

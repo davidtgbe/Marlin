@@ -715,7 +715,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
       case 204: M204(); break;                                    // M204: Set acceleration
       case 205: M205(); break;                                    // M205: Set advanced settings
 
-      #if HAS_M206_COMMAND
+      #if HAS_HOME_OFFSET
         case 206: M206(); break;                                  // M206: Set home offsets
       #endif
 
@@ -881,7 +881,7 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 425: M425(); break;                                  // M425: Tune backlash compensation
       #endif
 
-      #if HAS_M206_COMMAND
+      #if HAS_HOME_OFFSET
         case 428: M428(); break;                                  // M428: Apply current_position to home_offset
       #endif
 
@@ -1173,10 +1173,7 @@ void GcodeSuite::process_subcommands_now(FSTR_P fgcode) {
   for (;;) {
     PGM_P const delim = strchr_P(pgcode, '\n');       // Get address of next newline
     const size_t len = delim ? delim - pgcode : strlen_P(pgcode); // Get the command length
-    char cmd[len + 1];                                // Allocate a stack buffer
-    strncpy_P(cmd, pgcode, len);                      // Copy the command to the stack
-    cmd[len] = '\0';                                  // End with a nul
-    parser.parse(cmd);                                // Parse the command
+    parser.parse(MString<MAX_CMD_SIZE>().setn_P(pgcode, len));    // Parse the command
     process_parsed_command(true);                     // Process it (no "ok")
     if (!delim) break;                                // Last command?
     pgcode = delim + 1;                               // Get the next command

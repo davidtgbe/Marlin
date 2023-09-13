@@ -429,7 +429,7 @@ G29_TYPE GcodeSuite::G29() {
       if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("> 3-point Leveling");
       points[0].z = points[1].z = points[2].z = 0;  // Probe at 3 arbitrary points
     #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
-      TERN_(DWIN_LCD_PROUI, DWIN_LevelingStart());
+      TERN_(DWIN_LCD_PROUI, dwinLevelingStart());
     #endif
 
     TERN_(EXTENSIBLE_UI, ExtUI::onLevelingStart());
@@ -440,7 +440,7 @@ G29_TYPE GcodeSuite::G29() {
       #if ENABLED(PREHEAT_BEFORE_LEVELING)
         if (!abl.dryrun) probe.preheat_for_probing(LEVELING_NOZZLE_TEMP,
           #if ALL(DWIN_LCD_PROUI, HAS_HEATED_BED)
-            HMI_data.BedLevT
+            hmiData.bedLevT
           #else
             LEVELING_BED_TEMP
           #endif
@@ -748,6 +748,7 @@ G29_TYPE GcodeSuite::G29() {
             }
             //if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM_P(axis == Y_AXIS ? PSTR("Y=") : PSTR("X=", pos);
 
+            safe_delay(4);
             abl.measured_z = current_position.z - bdl.read();
             if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("x_cur ", planner.get_axis_position_mm(X_AXIS), " z ", abl.measured_z);
 
