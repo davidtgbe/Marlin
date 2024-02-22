@@ -119,44 +119,6 @@ bool XPT2046::isTouched() {
   );
 }
 
-/* 20220202 rmm
-bool XPT2046::getRawPoint(int16_t *x, int16_t *y) {
-  if (isBusy()) return false;
-  if (!isTouched()) return false;
-  *x = getRawData(XPT2046_X);
-  *y = getRawData(XPT2046_Y);
-  return isTouched();
-}
-
-uint16_t XPT2046::getRawData(const XPTCoordinate coordinate) {
-  uint16_t data[3];
-uint32_t now = millis() ;
-
-  dataTransferBegin();
-
-  for (uint16_t i = 0; i < 3 ; i++) {
-    IO(coordinate);
-    data[i] = (IO() << 4) | (IO() >> 4);
-  }
-
-  dataTransferEnd();
-
-  uint16_t delta01 = delta(data[0], data[1]);
-  uint16_t delta02 = delta(data[0], data[2]);
-  uint16_t delta12 = delta(data[1], data[2]);
-
-  if (delta01 > delta02 || delta01 > delta12) {
-    if (delta02 > delta12)
-      data[0] = data[2];
-    else
-      data[1] = data[2];
-  }
-
-  return (data[0] + data[1]) >> 1;
-}
- rmm */
-
-
 //---- 20220202 rmm
 
 #define BUFFER_LENGTH 16  // > ( FILTER_TIME + END_TRANSIENT_TIME  ) / MIN_SAMPLING_TIME
@@ -167,134 +129,134 @@ uint32_t now = millis() ;
 
 
 bool XPT2046::getRawPoint(int16_t *x, int16_t *y) {
-  static uint32_t buf_t[ BUFFER_LENGTH ] ;
-  static int16_t buf_x[ BUFFER_LENGTH ] ;
-  static int16_t buf_y[ BUFFER_LENGTH ] ;
-  static uint16_t n_samples = 0 ;
-  static uint16_t buf_ind = 0 ;
-  static uint32_t t_start = 0 ;
+  static uint32_t buf_t[ BUFFER_LENGTH ];
+  static int16_t buf_x[ BUFFER_LENGTH ];
+  static int16_t buf_y[ BUFFER_LENGTH ];
+  static uint16_t n_samples = 0;
+  static uint16_t buf_ind = 0;
+  static uint32_t t_start = 0;
 
-  static int16_t x_lp, y_lp ;
-  static uint32_t t_lp = 0 ;
-  static bool valid_lp = false ; // Last point valid.
+  static int16_t x_lp, y_lp;
+  static uint32_t t_lp = 0;
+  static bool valid_lp = false; // Last point valid.
 
-  uint32_t now ;
+  uint32_t now;
   if (isBusy()) return false;
 
-  now = millis() ;
+  now = millis();
   // If not enough time, return last point.
-  if ( (now - t_lp) >= MIN_SAMPLING_TIME )
+  if ((now - t_lp) >= MIN_SAMPLING_TIME)
   {
-    t_lp = now ;
+    t_lp = now;
 
     // Calculate current point.
 
     // If not touched, not point.
-    if ( !isTouched() )
+    if (!isTouched())
     {
-      x_lp = 0 ;
-      y_lp = 0 ;
-      valid_lp = false ;
+      x_lp = 0;
+      y_lp = 0;
+      valid_lp = false;
 
       // Clear buffer.
-      n_samples = 0 ;
-      t_start = 0 ;
+      n_samples = 0;
+      t_start = 0;
     }
     else
     {
-      int16_t sample_x, sample_y ;
-      bool valid_sample ;
+      int16_t sample_x, sample_y;
+      bool valid_sample;
 
       sample_x = getRawData(XPT2046_X);
-      valid_sample = isTouched() ;
+      valid_sample = isTouched();
       sample_y = getRawData(XPT2046_Y);
-      valid_sample = isTouched() ;
+      valid_sample = isTouched();
 
-      if ( !valid_sample )
+      if (!valid_sample)
       {
-        x_lp = 0 ;
-        y_lp = 0 ;
-        valid_lp = false ;
+        x_lp = 0;
+        y_lp = 0;
+        valid_lp = false;
 
         // Clear buffer.
-        n_samples = 0 ;
-        t_start = 0 ;
+        n_samples = 0;
+        t_start = 0;
       }
       else
       {
         // Is this first touching event?
-        if ( !t_start )
+        if (!t_start)
         {
-          t_start = now ;  // If now is 0 then this event will be discarded...
-          n_samples = 0 ;
+          t_start = now;  // If now is 0 then this event will be discarded...
+          n_samples = 0;
         }
 
         // Add sample to buffer if not in transient time.
 
-        if ( (now - t_start) > START_TRANSIENT_TIME )
+        if ((now - t_start) > START_TRANSIENT_TIME)
         {
-          buf_x[ buf_ind ] = sample_x ;
-          buf_y[ buf_ind ] = sample_y ;
-          buf_t[ buf_ind ] = now ;
-          n_samples = ( n_samples + 1 ) % BUFFER_LENGTH ;  // discard too many samples...
+          buf_x[buf_ind] = sample_x;
+          buf_y[buf_ind] = sample_y;
+          buf_t[buf_ind] = now;
+          n_samples = (n_samples + 1) % BUFFER_LENGTH;  // discard too many samples...
 
 
           // Valid point if elapsed transient time + average time + end transient time
-          if ( ( now - t_start ) > ( START_TRANSIENT_TIME + FILTER_TIME + END_TRANSIENT_TIME ) )
+          if ((now - t_start) > (START_TRANSIENT_TIME + FILTER_TIME + END_TRANSIENT_TIME))
           {
             // Filter the samples between now-transient_time-filter_time and now-transient_time
             // Lets take the average but maybe median would be better (but cpu expensive).
-            uint32_t t1, t2 ;
-            int32_t sx, sy, ns ;
-            sx = 0 ;
-            sy = 0 ;
-            ns = 0 ;
-            t1 = now - START_TRANSIENT_TIME - FILTER_TIME ;
-            t2 = now - END_TRANSIENT_TIME ;
-            for ( uint16_t i = 0 ; i < n_samples ; ++i )
+            uint32_t t1, t2;
+            int32_t sx, sy, ns;
+            sx = 0;
+            sy = 0;
+            ns = 0;
+            t1 = now - START_TRANSIENT_TIME - FILTER_TIME;
+            t2 = now - END_TRANSIENT_TIME;
+            for (uint16_t i = 0 ; i < n_samples ; ++i)
             {
-              uint16_t j ;
-              uint32_t t ;
-              j = ( buf_ind + BUFFER_LENGTH - i ) % BUFFER_LENGTH ;
-              t = buf_t[ j ] ;
-              if ( ( t > t1 ) && ( t < t2 ) )
+              uint16_t j;
+              uint32_t t;
+              j = (buf_ind + BUFFER_LENGTH - i ) % BUFFER_LENGTH;
+              t = buf_t[ j ];
+              if (( t > t1 ) && ( t < t2 ))
               {
-                sx += buf_x[ j ] ;
-                sy += buf_y[ j ] ;
-                ++ns ;
+                sx += buf_x[j];
+                sy += buf_y[j];
+                ++ns;
               }
             }
 
-            if ( ns )
+            if (ns)
             {
-              x_lp = sx / ns ;
-              y_lp = sy / ns ;
-              valid_lp = true ;
+              x_lp = sx / ns;
+              y_lp = sy / ns;
+              valid_lp = true;
 
-//              SERIAL_ECHOLNPGM( "t ", now, " x_lp ", x_lp, " y_lp ", y_lp ) ;
+//              SERIAL_ECHOLNPGM( "t ", now, " x_lp ", x_lp, " y_lp ", y_lp );
             }
           }
-          buf_ind = ( buf_ind + 1 ) % BUFFER_LENGTH ;
+          buf_ind = ( buf_ind + 1 ) % BUFFER_LENGTH;
         }
         // else not needed to add 
       }
     }
   }
 
-  *x = x_lp ;
-  *y = y_lp ;
-  return valid_lp ;
+  *x = x_lp;
+  *y = y_lp;
+  return valid_lp;
 }
 
 uint16_t XPT2046::getRawData(const XPTCoordinate coordinate) {
-  uint16_t data ;
+  uint16_t data;
 
   dataTransferBegin();
   IO(coordinate);
   data = (IO() << 5) | (IO() >> 3);
   dataTransferEnd();
 
-  return data ;
+  return data;
 }
 
 //---- 20220202 rmm
