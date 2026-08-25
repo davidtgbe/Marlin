@@ -52,6 +52,11 @@
   // Decrease delays and flash wear by spreading writes across the
   // 128 kB sector allocated for EEPROM emulation.
   #define FLASH_EEPROM_LEVELING
+/*#elif ENABLED(IIC_BL24CXX_EEPROM)
+  #define IIC_EEPROM_SDA                    PB11
+  #define IIC_EEPROM_SCL                    PB10
+  #define EEPROM_DEVICE_ADDRESS             0xA0
+  #define MARLIN_EEPROM_SIZE              0x1000  // 4K*/
 #elif ENABLED(I2C_EEPROM)
   // AT24C04C, Size 4Kb/512B, PageSize 16B
   // Not working. 512 Bytes are not enough to store all config settings. Tested: Replaced with AT24C256 IC and it works fine. 
@@ -165,7 +170,7 @@
   #define TFT_RS_PIN                        PD13
 
   #if HAS_FSMC_TFT
-    #define LCD_USE_DMA_FSMC                      // Use DMA transfers to send data to the TFT
+    #define LCD_USE_DMA_FSMC
     #define FSMC_CS_PIN               TFT_CS_PIN
     #define FSMC_RS_PIN               TFT_RS_PIN
     #define TFT_INTERFACE_FSMC_8BIT
@@ -237,8 +242,7 @@
 
   #if DISABLED(ONBOARD_SDIO)
     #define SOFTWARE_SPI
-    #define SDSS                            PC11
-    #define SD_SS_PIN                       SDSS
+    #define SD_SS_PIN                       PC11
     #define SD_SCK_PIN                      PC12
     #define SD_MISO_PIN                     PC8
     #define SD_MOSI_PIN                     PD2

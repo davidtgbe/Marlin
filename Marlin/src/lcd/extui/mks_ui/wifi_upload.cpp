@@ -422,7 +422,7 @@ EspUploadResult doCommand(uint8_t op, const uint8_t *data, size_t dataLen, uint3
   return stat;
 }
 
-// Send a synchronising packet to the serial port in an attempt to induce
+// Send a synchronizing packet to the serial port in an attempt to induce
 // the ESP8266 to auto-baud lock on the baud rate.
 EspUploadResult sync(uint16_t timeout) {
   uint8_t buf[36];
@@ -650,12 +650,14 @@ void resetWiFiForUpload(int begin_or_end) {
   //#if 0
   uint32_t start = getWifiTick();
 
-  if (begin_or_end == 0) {
-    SET_OUTPUT(WIFI_IO0_PIN);
-    WRITE(WIFI_IO0_PIN, LOW);
-  }
-  else
-    SET_INPUT_PULLUP(WIFI_IO0_PIN);
+  #if PIN_EXISTS(WIFI_IO0)
+    if (begin_or_end == 0) {
+      SET_OUTPUT(WIFI_IO0_PIN);
+      WRITE(WIFI_IO0_PIN, LOW);
+    }
+    else
+      SET_INPUT_PULLUP(WIFI_IO0_PIN);
+  #endif
 
   WIFI_RESET();
   while (getWifiTickDiff(start, getWifiTick()) < 500) { /* nada */ }
