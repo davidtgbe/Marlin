@@ -53,7 +53,7 @@
  *               41 - Counter-Clockwise M4
  *               50 - Clockwise M5
  *               51 - Counter-Clockwise M5
- **/
+ */
 void GcodeSuite::G35() {
 
   DEBUG_SECTION(log_G35, "G35", DEBUGGING(LEVELING));
@@ -84,10 +84,10 @@ void GcodeSuite::G35() {
   probe.use_probing_tool();
 
   // Disable duplication mode on homing
-  TERN_(HAS_DUPLICATION_MODE, set_duplication_enabled(false));
+  TERN_(HAS_DUPLICATION_MODE, motion.set_extruder_duplication(false));
 
   // Home only Z axis when X and Y is trusted, otherwise all axes, if needed before this procedure
-  if (!all_axes_trusted()) process_subcommands_now(F("G28Z"));
+  if (!motion.all_axes_trusted()) process_subcommands_now(F("G28Z"));
 
   bool err_break = false;
 
@@ -95,9 +95,11 @@ void GcodeSuite::G35() {
   for (uint8_t i = 0; i < G35_PROBE_COUNT; ++i) {
     const float z_probed_height = probe.probe_at_point(tramming_points[i], PROBE_PT_RAISE);
     if (isnan(z_probed_height)) {
-      SERIAL_ECHO(
-        F("G35 failed at point "), i + 1, F(" ("), FPSTR(pgm_read_ptr(&tramming_point_name[i])), C(')'),
-        FPSTR(SP_X_STR), tramming_points[i].x, FPSTR(SP_Y_STR), tramming_points[i].y
+      SERIAL_ECHOLN(
+        F("G35 failed at point "), i + 1,
+        F(" ("), FPSTR(pgm_read_ptr(&tramming_point_name[i])), C(')'),
+        FPSTR(SP_X_STR), tramming_points[i].x,
+        FPSTR(SP_Y_STR), tramming_points[i].y
       );
       err_break = true;
       break;
@@ -151,7 +153,7 @@ void GcodeSuite::G35() {
   move_to_tramming_wait_pos();
 
   // After this operation the Z position needs correction
-  set_axis_never_homed(Z_AXIS);
+  motion.set_axis_never_homed(Z_AXIS);
 }
 
 #endif // ASSISTED_TRAMMING

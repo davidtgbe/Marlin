@@ -34,6 +34,10 @@
 #include "../module/temperature.h"
 #include "../MarlinCore.h"
 
+#if ENABLED(MAX7219_REINIT_ON_POWERUP)
+  #include "max7219.h"
+#endif
+
 #if ENABLED(PS_OFF_SOUND)
   #include "../libs/buzzer.h"
 #endif
@@ -58,6 +62,10 @@ bool Power::psu_on;
   #endif
 
   millis_t Power::lastPowerOn;
+#endif
+
+#if PSU_TRACK_STATE_MS
+  millis_t Power::last_state_change_ms = 0;
 #endif
 
 /**
@@ -87,9 +95,18 @@ void Power::power_on() {
   #endif
 
   OUT_WRITE(PS_ON_PIN, PSU_ACTIVE_STATE);
+  #if ENABLED(PSU_OFF_REDUNDANT)
+    OUT_WRITE(PS_ON1_PIN, TERN_(PSU_OFF_REDUNDANT_INVERTED, !)PSU_ACTIVE_STATE);
+  #endif
+  TERN_(PSU_TRACK_STATE_MS, last_state_change_ms = millis());
+
   psu_on = true;
   safe_delay(PSU_POWERUP_DELAY);
+
   restore_stepper_drivers();
+
+  TERN_(MAX7219_REINIT_ON_POWERUP, max7219.init());
+
   TERN_(HAS_TRINAMIC_CONFIG, safe_delay(PSU_POWERUP_DELAY));
 
   #ifdef PSU_POWERUP_GCODE
@@ -102,7 +119,7 @@ void Power::power_on() {
  * Processes any PSU_POWEROFF_GCODE and makes a PS_OFF_SOUND if enabled.
  */
 void Power::power_off() {
-  TERN_(HAS_SUICIDE, suicide());
+  TERN_(HAS_SUICIDE, marlin.suicide());
 
   if (!psu_on) return;
 
@@ -117,6 +134,11 @@ void Power::power_off() {
   #endif
 
   OUT_WRITE(PS_ON_PIN, !PSU_ACTIVE_STATE);
+  #if ENABLED(PSU_OFF_REDUNDANT)
+    OUT_WRITE(PS_ON1_PIN, IF_DISABLED(PSU_OFF_REDUNDANT_INVERTED, !)PSU_ACTIVE_STATE);
+  #endif
+  TERN_(PSU_TRACK_STATE_MS, last_state_change_ms = millis());
+
   psu_on = false;
 
   #if ANY(POWER_OFF_TIMER, POWER_OFF_WAIT_FOR_COOLDOWN)
@@ -179,14 +201,14 @@ void Power::power_off() {
   /**
    * Check all conditions that would signal power needing to be on.
    *
-   * @returns bool  if power is needed
+   * @return bool  if power is needed
    */
   bool Power::is_power_needed() {
 
     // If any of the stepper drivers are enabled...
     if (stepper.axis_enabled.bits) return true;
 
-    if (printJobOngoing() || printingIsPaused()) return true;
+    if (marlin.printJobOngoing() || marlin.printingIsPaused()) return true;
 
     #if ENABLED(AUTO_POWER_FANS)
       FANS_LOOP(i) if (thermalManager.fan_speed[i]) return true;
@@ -239,7 +261,7 @@ void Power::power_off() {
       nextPowerCheck = now + 2500UL;
       if (is_power_needed())
         power_on();
-      else if (!lastPowerOn || (POWER_TIMEOUT > 0 && ELAPSED(now, lastPowerOn + SEC_TO_MS(POWER_TIMEOUT))))
+      else if (!lastPowerOn || (POWER_TIMEOUT > 0 && ELAPSED(now, lastPowerOn, SEC_TO_MS(POWER_TIMEOUT))))
         power_off();
     }
   }
